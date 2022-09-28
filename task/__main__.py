@@ -31,17 +31,25 @@ def search_id(id):
     return token
 
 def show():
+    def parse(num):
+        if num < 10:
+            return "  " + str(num)
+        elif num < 100:
+            return " " + str(num)
+        else:
+            return str(num)
+
     global l
     extra = sys.argv[2:]
-    print ("#  |    id   | Note")
+    print ("  #  |    id   | Note")
     count = 1
     for element in l:
         if 'done' in extra or 'all' in extra:
-            print(str(count), ' | ', element[0], '|', element[-1])
+            print(parse(count), ' | ', element[0], '|', element[-1])
             count += 1
         else:
             if 'undone' == element[2]:
-                print(str(count), ' | ', element[0], '|',  element[-1])
+                print(parse(count), ' | ', element[0], '|',  element[-1])
                 count += 1
 
 def add(*args):
