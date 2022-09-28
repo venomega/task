@@ -3,11 +3,7 @@ import json
 import os
 
 
-if sys.platform == "win32":
-    dir = "\\"
-else:
-    dir = "/"
-path = os.environ['HOME'] + dir + "task.json"
+path = os.path.join(os.environ['HOME'], "task.json")
 l = []
 
 def load():
