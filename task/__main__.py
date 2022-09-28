@@ -1,6 +1,8 @@
 import sys
 import json
 import os
+import time
+import random 
 
 
 path = os.path.join(os.environ['HOME'], "task.json")
@@ -12,30 +14,54 @@ def load():
 
 def save():
     global l
+    l.sort(key=lambda x: x[1])
     try:
         json.dump(l, open(path,"w"))
     except:
         print("Failed to write file")
         exit(1)
 
+def search_id(id):
+    global l
+    token = 0
+    for element in l:
+        if element[0] == id:
+            token = element
+            break
+    return token
+
 def show():
     global l
-    print ("id | Note")
+    extra = sys.argv[2:]
+    print ("#  |    id   | Note")
+    count = 1
     for element in l:
-        print(str(element[0]), ' | ', element[1])
+        if 'done' in extra or 'all' in extra:
+            print(str(count), ' | ', element[0], '|', element[-1])
+            count += 1
+        else:
+            if 'undone' == element[2]:
+                print(str(count), ' | ', element[0], '|',  element[-1])
+                count += 1
 
 def add(*args):
     global l
     print (*args)
-    id = len(l) + 1
+    id = random.randint(100000,999999)
+    timestamp = time.time()
     text = " ".join(*args)
-    l.append([id, text])
+    status = 'undone'
+    l.append([id, timestamp, status, text])
 
 def rem(id):
     global l
-    for element in l:
-        if element[0] == id:
-            l.remove(element)
+    element = search_id(id)
+    l.remove(element)
+
+def done(id):
+    global l
+    position = l.index(search_id(id))
+    l[position][2] = 'done'
 
 def main():
     load()
@@ -48,6 +74,8 @@ def main():
         add(sys.argv[2:])
     elif sys.argv[1] in ["del", "rem"]:
         rem(int(sys.argv[2]))
+    elif sys.argv[1] == "done":
+        done(int(sys.argv[2]))
     save()
     return 0
 
