@@ -2,10 +2,10 @@ import sys
 import json
 import os
 import time
-import random 
+import random
 
 
-path = os.path.join(os.environ['HOME'], "task.json")
+path = os.path.join(os.environ['HOME'], ".task.json")
 l = []
 
 def load():
