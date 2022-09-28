@@ -4,7 +4,7 @@ setup(
     name='task',
     author="venomega",
     author_email="usercryptonumberzero@gmail.com",
-    version='0.1',
+    version='0.2',
     packages=['task', ],
     requires=[],
     licence='GPL-3',
