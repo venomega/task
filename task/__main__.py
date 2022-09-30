@@ -54,7 +54,6 @@ def show():
 
 def add(*args):
     global l
-    print (*args)
     id = random.randint(100000,999999)
     timestamp = time.time()
     text = " ".join(*args)
