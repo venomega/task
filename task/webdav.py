@@ -42,8 +42,11 @@ class Webdav():
                 s.close()
                 break
             self.response += data
-        print (b" ".join(self.response.split(b"\r\n")[0].split(b" ")[2:]).decode() + "\n")
+        msg = b" ".join(self.response.split(b"\r\n")[0].split(b" ")[2:]).decode() 
+        print (msg + "\n")
         if not self.sendall:
+            if "Not Found" in msg:
+                return '[]'
             n = self.response.index(b"\r\n\r\n")
             #open("/dev/stdout", "wb").write(self.response[n+4:])
             return self.response[n+4:].decode()
