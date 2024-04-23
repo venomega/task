@@ -19,7 +19,11 @@ class Webdav():
     
     def __exec(self):
         s = socket.socket()
-        if ssl:
+
+        try:
+            if ssl.wrap_socket:
+                s = ssl.wrap_socket(s)
+        except:
             ctx = ssl.create_default_context()  # python latest versions
             s = ctx.wrap_socket(s, server_hostname=self.hostname)
         try:
@@ -28,20 +32,21 @@ class Webdav():
             raise("Error Connecting")
             print("THIS IS NOT SUPPOSED TO BE REACHED")
         if self.sendall: # uploading file
-            print("Reached", self.request)
             s.sendall(self.request + self.content)
         else: # reading file
             s.send(self.request)
-        response = b""
+        self.response = b""
         while True:
             data = s.recv(3333)
             if not data:
+                s.close()
                 break
-            response += data
-        print (b" ".join(response.split(b"\r\n")[0].split(b" ")[2:]).decode())
+            self.response += data
+        print (b" ".join(self.response.split(b"\r\n")[0].split(b" ")[2:]).decode() + "\n")
         if not self.sendall:
-            n = response.index(b"\r\n\r\n")
-            open("dump", "wb").write(response[n+4:])
+            n = self.response.index(b"\r\n\r\n")
+            #open("/dev/stdout", "wb").write(self.response[n+4:])
+            return self.response[n+4:].decode()
         
 
     def get(self, filepath, outputfilepath="dump"):
@@ -53,10 +58,10 @@ class Webdav():
         else:
             self.request = b"GET %b HTTP/1.1\r\nConnection: Close\r\nHost: %b:%i\r\n\r\n" % (filepath, self.hostname.encode(), self.port)
         self.sendall = False
-        self.__exec()
+        return self.__exec()
 
-    def put(self, filepath, outputfiledir="/"):   # INCOMPLETO
-        if  "/" != outputfiledir[0]:
+    def put(self, filepath, outputfiledir="/"): 
+        if  "/" != outputfiledir[0]: 
             outputfiledir = "/" + outputfiledir
         if  "/" != outputfiledir[-1]:
             outputfiledir = outputfiledir + "/"
@@ -64,9 +69,9 @@ class Webdav():
         print(self.outputfiledir)
         self.content = open(filepath, "rb").read()
         if self.auth:
-            self.request = b"PUT %b HTTP/1.1\r\nAuthorization: Basic %b\r\nContent-Length: %i\r\nConnection: Close\r\nHost: %b:%i\r\n\r\n" % ((self.outputfiledir + filepath).encode(), self.base64encoded, len(self.content), self.hostname.encode(), self.port)
+            self.request = b"PUT %b HTTP/1.1\r\nAuthorization: Basic %b\r\nContent-Length: %i\r\nConnection: Close\r\nHost: %b:%i\r\n\r\n" % ((self.outputfiledir + os.path.basename(filepath)).encode(), self.base64encoded, len(self.content), self.hostname.encode(), self.port)
         else:
-            self.request = b"PUT %b HTTP/1.1\r\nConnection: Close\r\nContent-Length: %i\r\nHost: %b:%i\r\n\r\n" % ((self.outputfiledir + filepath).encode(), len(self.content), self.hostname.encode(), self.port)
+            self.request = b"PUT %b HTTP/1.1\r\nConnection: Close\r\nContent-Length: %i\r\nHost: %b:%i\r\n\r\n" % ((self.outputfiledir + os.path.basename(filepath)).encode(), len(self.content), self.hostname.encode(), self.port)
         self.sendall = True
         self.__exec()
 
