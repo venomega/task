@@ -78,8 +78,8 @@ def sync():
     if os.path.exists(config):
         wv = webdav.Webdav.parse(config)
     else:
-        print("error")
-        # missing create config template
+        print("Error please configure", config)
+        print('{"ssl": true, "username": "example_username", "password": "example_passwd", "hostname": "example.domain.com", "port": 1234}', end="", file=open(config, "w"))
         return 1
     if len(sys.argv) == 3 and sys.argv[2] in ["force", "-f"]:
         pass
