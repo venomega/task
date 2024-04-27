@@ -3,9 +3,11 @@ import json
 import os
 import time
 import random
+import webdav
 
 
 path = os.path.join(os.environ['HOME'], ".task.json")
+config = f"{os.environ["HOME"]}/.task.cfg"
 l = []
 
 def load():
@@ -70,6 +72,29 @@ def done(id):
     position = l.index(search_id(id))
     l[position][2] = 'done'
 
+def sync():
+    global l, config
+    wv = object
+    if os.path.exists(config):
+        wv = webdav.Webdav.parse(config)
+    else:
+        print("error")
+        # missing create config template
+        return 1
+    if len(sys.argv) == 3 and sys.argv[2] in ["force", "-f"]:
+        pass
+    else:
+        response = wv.get(".task.json")
+        cloud = json.loads(response)
+        l_list = []
+        for i in l:
+            l_list.append(i[0])
+        for i in cloud:
+            if not i[0] in l_list:
+                l.append(i)
+    wv.put(path)
+    return 0
+
 def main():
     load()
     if len(sys.argv) < 2:
@@ -83,6 +108,8 @@ def main():
         rem(int(sys.argv[2]))
     elif sys.argv[1] == "done":
         done(int(sys.argv[2]))
+    elif sys.argv[1] == "sync":
+        sync()
     save()
     return 0
 
