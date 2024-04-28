@@ -62,7 +62,7 @@ def add(*args):
     arg_list = args[0]
     args_list = args[0]
     for arg in arg_list:
-        if "--time=" in arg:
+        if "--time=" in arg or "-t=" in arg:
             st = arg.replace("--time=", "")
             timestamp = int(os.popen(f"date --date='{st}' +%s").read())
             args_list.remove(arg)
