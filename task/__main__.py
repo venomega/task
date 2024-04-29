@@ -131,7 +131,7 @@ def agenda():
             text = element[-1]
             id = element[0]
             token = datetime.fromtimestamp(t)
-            yield f"[{id}] {token.strftime("%d/%m")} {text}"
+            yield f"[{id}] {token.strftime('%d/%m')} {text}"
 
     global l
     token = l
