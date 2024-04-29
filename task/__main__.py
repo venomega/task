@@ -8,7 +8,7 @@ from datetime import datetime
 
 
 path = os.path.join(os.environ['HOME'], ".task.json")
-config = f"{os.environ["HOME"]}/.task.cfg"
+config = f"{os.environ['HOME']}/.task.cfg"
 l = []
 
 def load():
