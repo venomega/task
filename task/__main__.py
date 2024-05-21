@@ -102,6 +102,8 @@ def sync():
         for i in cloud:
             if not i[0] in l_list:
                 l.append(i)
+    if len(l) == 0:
+        return 1
     wv.put(path)
     return 0
 
